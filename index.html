@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!DOCTYPE html> 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="css/iphone2-1.css" />
+           <script type="text/javascript" src="phonegap.js"></script>
+
+        
+        <script type="text/javascript" charset="utf-8" src="js/stb.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.9.1.min.js"></script>
+		<script src="js/channels.js"></script>
+         <script type="text/javascript" charset="utf-8">
+
+
+
+    // Handle the menu button
+    //
+    function onMenuKeyDown() {
+    navigator.app.exitApp();
+    
+    }
+	
+
+
+        // Wait for Cordova to load
+        //
+        document.addEventListener("deviceready", onDeviceReady, false);
+	var o = JSON.parse(channels);
+	var channelLive=false;
+
+        // Cordova is ready
+        //
+        function onDeviceReady() {
+        
+			
+
+			detectSTB();
+			if (stbBaseUrl) {
+			
+				$('#debug').append("<a href='"+stbBaseUrl+"/remoteControl/cmd?operation=10'>STB</a>");
+				$.ajax({
+					  url:stbBaseUrl+"/remoteControl/cmd?operation=10",
+					  dataType: 'json',
+					  cache:"false",
+					  async: false,
+					  statusCode: {
+						200:function(data){
+							if(data.result.data.osdContext=="LIVE")
+								channelLive = data.result.data.playedMediaId;
+							$('#debug').append(data.result.data.osdContext+" "+data.result.data.playedMediaId);
+							
+						}
+					  }
+				});	
+			}
+	
+			$.ajax({
+			  url:"http://rendezvous.griotte.com/mp/kelziktv/?format=json",
+			  dataType: 'json',
+			  cache:"false",
+			  statusCode: {
+				200:function(data){
+					console.log(channelLive);
+					showResults(data);
+				}
+			  }
+			});
+	
+			
+        }
+
+    function showResults(progs){
+
+		var tmpSTR2 = "<ul>";
+
+		for(item in progs){
+			console.log(channelLive);
+
+			if(progs[item].channelId==channelLive)
+				tmpSTR2 += "<li class='ui-li ui-li-live'>";
+			else
+				tmpSTR2 += "<li class='ui-li ui-li-hr'>";
+	
+			tmpSTR2 += "<img class='ui-li-thumb' src='images/CACHE_CHANNELS/90x90_"+o[progs[item].channelId].image+"'>";
+			tmpSTR2 += "<div class='deezerlinks'>";
+						tmpSTR2 += "<span class='node-text-title'>"+progs[item].title+" </span><span class='nodes node-category'>("+progs[item].category+")</span>";
+			
+			tmpSTR2 += "<ul class='node-deezer'>";
+			
+			if(progs[item].artists!=undefined){
+				tmpSTR2 += "<div><span class='node-text-artists'>Musique par "+progs[item].artists+"</span></div>";
+			}
+			tmpSTR2 += "<ul class='node-deezer'>";
+			
+			if(progs[item].artists!=undefined){
+				
+				for(compositor in progs[item].artist){
+					tmpSTR2 += "<li class='node-deezer-artist'> <a target='_blank' href='deezer://www.deezer.com/artist/"+progs[item].artist[compositor].idDZ+"'>"+progs[item].artist[compositor].nameDZ+"</a></li>";
+				}
+			}
+			
+			if(progs[item].album!=undefined)
+				tmpSTR2 += "<li class='node-deezer-album'><a target='_blank' href='deezer://www.deezer.com/album/"+progs[item].album[0].idDZ+"'>"+progs[item].album[0].titleDZ+"</a></li>";
+
+			if(progs[item].playlist!=undefined)
+				tmpSTR2 += "<li class='node-deezer-playlist'><a target='_blank' href='"+progs[item].playlist[0].urlDZ+"'>"+progs[item].playlist[0].titleDZ+"</a></li>";
+			
+			if(progs[item].clip!=undefined){
+				for(clip in progs[item].clip){
+					tmpSTR2 += "<li class='node-dm-artist'> <a href=# onclick='window.open(\"http://www.dailymotion.com/embed/video/"+progs[item].clip[clip].id+"\", \"_self\");'>"+progs[item].clip[clip].title+"</a></li>";
+				//tmpSTR2 += "<li class='node-dm-artist'> <a href=# onclick='window.open(\"dailymotion://video/"+progs[item].clip[clip].id+"\", \"_system\");'>"+progs[item].clip[clip].title+"</a></li>";
+				}
+			}
+			
+			tmpSTR2 +="</ul>";
+			tmpSTR2 +="</div>";
+			tmpSTR2 +="</li>";
+			
+		}	
+		tmpSTR2 += "</ul>";
+		$('#content').append(tmpSTR2);
+		navigator.splashscreen.hide();
+	}
+
+        </script>
+     
+     
+</head>
+<body>
+<div class="div-title">
+<span  class='logo'><img  width=72px src="images/ico_musicontv.gif"></span><span  class='logo'><img   src="images/titre228-2.png"></span>
+<span>Retrouvez la musique des émissions en cours de diffusion à la TV</span>
+</div>
+<hr class="style-two">
+<center>
+<div id=content class="content">
+</div>
+</center>
+<div id=debug><div>
+</body>
+</html>
+
+
+
+		
+    
