@@ -95,7 +95,10 @@ var app = {
 			else
 				tmpSTR2 += "<li class='ui-li ui-li-hr'>";
 	
-			tmpSTR2 += "<img class='ui-li-thumb' src='images/CACHE_CHANNELS/90x90_"+o[progs[item].channelId].image+"'>";
+			if(o[progs[item].channelId]!=undefined)
+				tmpSTR2 += "<img class='ui-li-thumb' src='images/CACHE_CHANNELS/90x90_"+o[progs[item].channelId].image+"'>";
+			else
+				tmpSTR2 += "<img class='ui-li-thumb' src=''>";
 			tmpSTR2 += "<div class='deezerlinks'>";
 						tmpSTR2 += "<span class='node-text-title'>"+progs[item].title+" </span><span class='nodes node-category'>("+progs[item].category+")</span>";
 			
@@ -109,12 +112,12 @@ var app = {
 			if(progs[item].artists!=undefined){
 				
 				for(compositor in progs[item].artist){
-					tmpSTR2 += "<li class='node-deezer-artist'> <a target='_blank' href='deezer://www.deezer.com/artist/"+progs[item].artist[compositor].idDZ+"'>"+progs[item].artist[compositor].nameDZ+"</a></li>";
+					tmpSTR2 += "<li class='node-deezer-artist'> <a target='_blank' href='www://www.deezer.com/artist/"+progs[item].artist[compositor].idDZ+"'>"+progs[item].artist[compositor].nameDZ+"</a></li>";
 				}
 			}
 			
 			if(progs[item].album!=undefined)
-				tmpSTR2 += "<li class='node-deezer-album'><a target='_blank' href='deezer://www.deezer.com/album/"+progs[item].album[0].idDZ+"'>"+progs[item].album[0].titleDZ+"</a></li>";
+				tmpSTR2 += "<li class='node-deezer-album'><a target='_blank' href='www://www.deezer.com/album/"+progs[item].album[0].idDZ+"'>"+progs[item].album[0].titleDZ+"</a></li>";
 
 			if(progs[item].playlist!=undefined)
 				tmpSTR2 += "<li class='node-deezer-playlist'><a target='_blank' href='"+progs[item].playlist[0].urlDZ+"'>"+progs[item].playlist[0].titleDZ+"</a></li>";
